@@ -30,7 +30,7 @@ function moreinfo {
 }
 
 function usage {
-	echo -e "\nbreakmybox.sh [problem] [options]"
+	echo -e "\nbreakmybox.sh problem [options]"
 }
 
 function random_string {
@@ -57,17 +57,14 @@ function helpme {
 	header
 	usage
 	echo -e "\nFile system problems:"
-	echo -e "\n\t\"tmf\" \"directory\" - [ Too Many Files ]
-		- Fills a partition with dummy small files until it runs out of inodes"	
-	echo -e "\n\t\"ldf\" \"size in MB\" \"directory\"- [ Large Deleted File ]
-		- Creates a deleted open file"	
-	echo -e "\nNetwork problems:"
-	echo -e "\nSystem problems:"
+	echo -e "\n\t\"tmf\" \"directory\"
+		- Too many files - Fills a partition with temporary files until it runs out of inodes"	
+	echo -e "\n\t\"ldf\" \"size in MB\" \"directory\"
+		- Large deleted file - Creates a deleted open file"	
 	echo -e "\nFunny problems:"
 	echo -e "\n\t\"chmod\" - [chmod -x chmod]
 		-  Remove execute permissions of $(which chmod)
 		"
-	## remove file beginning with "-" ex.: -file
 	## remove path 
 }
 
@@ -125,8 +122,8 @@ function ldf {
 	fi 
 
 	dd if=/dev/zero of=$naughtypath bs=1M count=$size &> /dev/null
-	## fix this stuff
-	tail -F $naughtypath & 
+
+	tail -F $naughtypath &> /dev/null & 
 	echo -en "PID locking file: $!\n\n"
 	rm -f $naughtypath
 }
