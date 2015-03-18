@@ -6,7 +6,9 @@
 #                                     #
 #######################################
 
-function spinner {
+
+
+function spinner  {
 	local delay=0.5
 	local msg=$1
 	local spinstr='|/-\'
@@ -56,6 +58,9 @@ function error {
 function helpme {
 	header
 	usage
+	echo -e "\nOS problems:"
+	echo -e "\n\t\"nomorepids\"
+		- Decreases drastically the number of available PIDs leaving the box unable to create further processes."	
 	echo -e "\nFile system problems:"
 	echo -e "\n\t\"tmf\" \"directory\"
 		- Too many files - Fills a partition with temporary files until it runs out of inodes"	
@@ -65,7 +70,6 @@ function helpme {
 	echo -e "\n\t\"chmod\" - [chmod -x chmod]
 		-  Remove execute permissions of $(which chmod)
 		"
-	## remove path 
 }
 
 
@@ -148,6 +152,27 @@ function chmdfun {
 	fi
 }
 
+function nomorepids {
+	local pid_max="/proc/sys/kernel/pid_max"
+	local lower_pid="301"
+	local res=0
+	header
+	echo -e "\nThe current value of \"$pid_max\" is $(cat $pid_max)"
+	echo -ne "Set the value to $lower_pid? (y/n) "
+	read -n 2 reply	
+
+        if [[ ! $reply =~ ^[Yy]$ ]]; then
+                echo "Leaving..."
+                exit 0
+        fi
+
+	echo $lower_pid > $pid_max
+	
+	while [ $res -eq 0 ]; do
+		tail -f /dev/null & disown	
+	done
+}
+
 problem=$1
 
 case "$problem" in
@@ -159,6 +184,8 @@ case "$problem" in
 		ldf $2 $3 ;;
 	"chmod" )
 		chmdfun ;;
+	"nomorepids" )
+		nomorepids ;;
 	* )
 		usage
 		moreinfo ;;
