@@ -90,7 +90,7 @@ function tmf {
 	fi 
 	spinner "Filling up $dir with dummy files. Please wait..." &
 	spinner_pid=$!
-	trap "kill -9 $spinner_pid $BASHPID" SIGHUP SIGINT SIGTERM SIGKILL
+	trap "kill -9 $spinner_pid $BASHPID" SIGHUP SIGINT SIGTERM SIGQUIT
 	while [ true ]; do
 		mktemp -q -p $dir > /dev/null
 		if [ $? -ne 0 ]; then
